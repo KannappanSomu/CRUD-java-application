@@ -8,7 +8,7 @@ on:
 jobs:
 
   test:
-    name: Test - Units & Integrations
+    name: Build-Units & Integrations
     runs-on: ubuntu-18.04
 
     steps:
@@ -28,7 +28,7 @@ jobs:
           files: target/surefire-reports/*.xml
 
   sonar:
-    name: Test - SonarCloud Scan
+    name: CodeQuality- SonarCloud Scan
     runs-on: ubuntu-18.04
 
     steps:
@@ -76,7 +76,7 @@ jobs:
         run: docker push $REPO:${{ github.sha }}
 
   deploy:
-   name: deploy to k8s
+   name: Deploy to Kubernetes
    runs-on: ubuntu-18.04
    needs: [test, sonar,docker]
    env:
@@ -113,6 +113,3 @@ jobs:
      run: helm upgrade --set global.postgresql.postgresqlDatabase=postgres  --set global.postgresql.postgresqlUsername=postgres --set global.postgresql.postgresqlPassword=${{ secrets.PSG_PASS }} --install my-release bitnami/postgresql --namespace $APP_NAME --create-namespace
    - name: Deploy BackendApp
      run: helm upgrade --set image.tag=${{ github.sha }} --install crud-release ./deployment/helm/ --namespace $APP_NAME --create-namespace
-
-
-    
