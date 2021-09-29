@@ -33,7 +33,7 @@ jobs:
         run: echo ${{ env.PDB_PASS }}
       - name: inject password
         run: |
-          echo -e "\n spring.datasource.password=${{ env.PDB_PASS }}" >> ./src/main/resources/application.properties
+          echo -e "\nspring.datasource.password=${{ env.PDB_PASS }}" >> ./src/main/resources/application.properties
           echo "spring.datasource.url=jdbc:postgresql://${{ env.APP_NAME }}-postgresql.demo.svc.cluster.local:5432/${{ env.DB_NAME }}" >> ./src/main/resources/application.properties
           echo "spring.datasource.username=${{ env.DB_NAME }}"  >> ./src/main/resources/application.properties    
       - name: dispaly app properties
