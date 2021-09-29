@@ -6,6 +6,7 @@ on:
       - 'master'
 env:
   APP_NAME: crud
+  DB_NAME: postgres
 jobs:
   test:
     name: Build-Units & Integrations
@@ -31,7 +32,10 @@ jobs:
       - name: print env
         run: echo ${{ env.PDB_PASS }}
       - name: inject password
-        run: echo "spring.datasource.password=${{ env.PDB_PASS }}" >> ./src/main/resources/application.properties
+        run: |
+          echo "spring.datasource.password=${{ env.PDB_PASS }}" >> ./src/main/resources/application.properties
+          echo "spring.datasource.url=jdbc:postgresql://${{ env.APP_NAME }}-postgresql.demo.svc.cluster.local:5432/${{ env.DB_NAME }}" >> ./src/main/resources/application.properties
+          echo "spring.datasource.username=${{ env.DB_NAME }}"  >> ./src/main/resources/application.properties    
       - name: dispaly app properties
         run: cat ./src/main/resources/application.properties
       - id: set_output
