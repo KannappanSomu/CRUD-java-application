@@ -133,9 +133,9 @@ jobs:
           ./get_helm.sh
           helm repo add bitnami https://charts.bitnami.com/bitnami
    - name: Deploy Postgres
-     run: helm upgrade --set global.postgresql.postgresqlDatabase=postgres  --set global.postgresql.postgresqlUsername=postgres --set global.postgresql.postgresqlPassword=${{needs.test.outputs.PDB_PASS}} --install my-release bitnami/postgresql --namespace $APP_NAME --create-namespace
+     run: helm upgrade --set global.postgresql.postgresqlDatabase=$DB_NAME  --set global.postgresql.postgresqlUsername=postgres --set global.postgresql.postgresqlPassword=${{needs.test.outputs.PDB_PASS}} --install $APP_NAME bitnami/postgresql --namespace $APP_NAME --create-namespace
    - name: Deploy BackendApp
-     run: helm upgrade --set image.tag=${{ github.sha }} --install crud-release ./deployment/helm/ --namespace $APP_NAME --create-namespace
+     run: helm upgrade --set image.tag=${{ github.sha }} --install $APP_NAME ./deployment/helm/ --namespace $APP_NAME --create-namespace
 
   deployprod:
    name: Deploy to Prod Kubernetes
@@ -172,6 +172,6 @@ jobs:
           ./get_helm.sh
           helm repo add bitnami https://charts.bitnami.com/bitnami
    - name: Deploy Postgres
-     run: helm upgrade --set global.postgresql.postgresqlDatabase=postgres  --set global.postgresql.postgresqlUsername=postgres --set global.postgresql.postgresqlPassword=${{needs.test.outputs.PDB_PASS}} --install my-release bitnami/postgresql --namespace $APP_NAME --create-namespace
+     run: helm upgrade --set global.postgresql.postgresqlDatabase=$DB_NAME  --set global.postgresql.postgresqlUsername=postgres --set global.postgresql.postgresqlPassword=${{needs.test.outputs.PDB_PASS}} --install $APP_NAME bitnami/postgresql --namespace $APP_NAME --create-namespace
    - name: Deploy BackendApp
-     run: helm upgrade --set image.tag=${{ github.sha }} --install crud-release ./deployment/helm/ --namespace $APP_NAME --create-namespace
+     run: helm upgrade --set image.tag=${{ github.sha }} --install $APP_NAME ./deployment/helm/ --namespace $APP_NAME --create-namespace
