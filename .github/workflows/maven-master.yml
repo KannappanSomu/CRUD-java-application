@@ -10,13 +10,32 @@ jobs:
   test:
     name: Build-Units & Integrations
     runs-on: ubuntu-18.04
-
+    outputs:
+      PDB_PASS: ${{ steps.set_output.outputs.PDB_PASS }}
     steps:
       - uses: actions/checkout@v1
       - name: Set up JDK 11
         uses: actions/setup-java@v1
         with:
           java-version: 11.0.4
+      - uses: Azure/login@v1
+        with:
+          creds: '${{ secrets.AZURE_CREDENTIALS }}'
+      - uses: Azure/get-keyvault-secrets@v1
+        with:
+          keyvault: "key-vault-234"
+          secrets: 'postgres-user-password'  # comma separated list of secret keys that need to be fetched from the Key Vault 
+        id: myGetSecretAction
+      - name: Set env
+        run: echo "PDB_PASS=${{ steps.myGetSecretAction.outputs.postgres-user-password }}" >> $GITHUB_ENV
+      - name: print env
+        run: echo ${{ env.PDB_PASS }}
+      - name: inject password
+        run: echo "spring.datasource.username=${{ env.PDB_PASS }}" >> ./src/main/resources/application.properties
+      - name: dispaly app properties
+        run: cat ./src/main/resources/application.properties
+      - id: set_output
+        run: echo "::set-output name=PDB_PASS::${{ env.PDB_PASS }}"
       - name: Maven Package
         run: mvn -B clean package -DskipTests
       - name: Maven Verify
@@ -111,7 +130,7 @@ jobs:
           ./get_helm.sh
           helm repo add bitnami https://charts.bitnami.com/bitnami
    - name: Deploy Postgres
-     run: helm upgrade --set global.postgresql.postgresqlDatabase=postgres  --set global.postgresql.postgresqlUsername=postgres --set global.postgresql.postgresqlPassword=${{ secrets.PSG_PASS }} --install my-release bitnami/postgresql --namespace $APP_NAME --create-namespace
+     run: helm upgrade --set global.postgresql.postgresqlDatabase=postgres  --set global.postgresql.postgresqlUsername=postgres --set global.postgresql.postgresqlPassword=${{needs.test.outputs.PDB_PASS}} --install my-release bitnami/postgresql --namespace $APP_NAME --create-namespace
    - name: Deploy BackendApp
      run: helm upgrade --set image.tag=${{ github.sha }} --install crud-release ./deployment/helm/ --namespace $APP_NAME --create-namespace
 
@@ -151,6 +170,6 @@ jobs:
           ./get_helm.sh
           helm repo add bitnami https://charts.bitnami.com/bitnami
    - name: Deploy Postgres
-     run: helm upgrade --set global.postgresql.postgresqlDatabase=postgres  --set global.postgresql.postgresqlUsername=postgres --set global.postgresql.postgresqlPassword=${{ secrets.PSG_PASS }} --install my-release bitnami/postgresql --namespace $APP_NAME --create-namespace
+     run: helm upgrade --set global.postgresql.postgresqlDatabase=postgres  --set global.postgresql.postgresqlUsername=postgres --set global.postgresql.postgresqlPassword=${{needs.test.outputs.PDB_PASS}} --install my-release bitnami/postgresql --namespace $APP_NAME --create-namespace
    - name: Deploy BackendApp
      run: helm upgrade --set image.tag=${{ github.sha }} --install crud-release ./deployment/helm/ --namespace $APP_NAME --create-namespace
