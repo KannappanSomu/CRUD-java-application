@@ -116,14 +116,15 @@ jobs:
         creds: '${{ secrets.AZURE_CREDENTIALS }}'
         cluster-name: ${{ env.CLUSTER_NAME }}
         resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
-
+   - run: |
+      kubectl create namespace ${{ env.APP_NAME }} --dry-run -o json | kubectl apply -f -
     # Create image pull secret for ACR
    - uses: azure/k8s-create-secret@v1
      with:
         container-registry-url:  https://registry.hub.docker.com
         container-registry-username: ${{ secrets.DOCKER_USER }}
         container-registry-password: ${{ secrets.DOCKER_PASS }}
-        secret-name: docker
+        secret-name: ${{ env.APP_NAME }}
         namespace: ${{ env.APP_NAME }}
         force: true
    - name: Setup Helm3
@@ -135,7 +136,7 @@ jobs:
    - name: Deploy Postgres
      run: helm upgrade --set global.postgresql.postgresqlDatabase=$DB_NAME  --set global.postgresql.postgresqlUsername=postgres --set global.postgresql.postgresqlPassword=${{needs.test.outputs.PDB_PASS}} --install $APP_NAME bitnami/postgresql --namespace $APP_NAME --create-namespace
    - name: Deploy BackendApp
-     run: helm upgrade --set image.tag=${{ github.sha }} --install $APP_NAME ./deployment/helm/ --namespace $APP_NAME --create-namespace
+     run: helm upgrade --set imagePullSecret=${{ env.APP_NAME }} --set image.tag=${{ github.sha }} --install $APP_NAME ./deployment/helm/ --namespace $APP_NAME --create-namespace
 
   deployprod:
    name: Deploy to Prod Kubernetes
@@ -155,14 +156,15 @@ jobs:
         creds: '${{ secrets.AZURE_CREDENTIALS }}'
         cluster-name: ${{ env.CLUSTER_NAME }}
         resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
-
+   - run: |
+      kubectl create namespace ${{ env.APP_NAME }} --dry-run -o json | kubectl apply -f -
     # Create image pull secret for ACR
    - uses: azure/k8s-create-secret@v1
      with:
         container-registry-url:  https://registry.hub.docker.com
         container-registry-username: ${{ secrets.DOCKER_USER }}
         container-registry-password: ${{ secrets.DOCKER_PASS }}
-        secret-name: docker
+        secret-name: ${{ env.APP_NAME }}
         namespace: ${{ env.APP_NAME }}
         force: true
    - name: Setup Helm3
@@ -174,4 +176,4 @@ jobs:
    - name: Deploy Postgres
      run: helm upgrade --set global.postgresql.postgresqlDatabase=$DB_NAME  --set global.postgresql.postgresqlUsername=postgres --set global.postgresql.postgresqlPassword=${{needs.test.outputs.PDB_PASS}} --install $APP_NAME bitnami/postgresql --namespace $APP_NAME --create-namespace
    - name: Deploy BackendApp
-     run: helm upgrade --set image.tag=${{ github.sha }} --install $APP_NAME ./deployment/helm/ --namespace $APP_NAME --create-namespace
+     run: helm upgrade --set imagePullSecret=${{ env.APP_NAME }} --set image.tag=${{ github.sha }} --install $APP_NAME ./deployment/helm/ --namespace $APP_NAME --create-namespace
