@@ -15,30 +15,31 @@ jobs:
       PDB_PASS: ${{ steps.set_output.outputs.PDB_PASS }}
     steps:
       - uses: actions/checkout@v1
+        name: Checkout latest commit on Master
       - name: Set up JDK 11
         uses: actions/setup-java@v1
         with:
           java-version: 11.0.4
       - uses: Azure/login@v1
+        name: Login to Azure
         with:
           creds: '${{ secrets.AZURE_CREDENTIALS }}'
       - uses: Azure/get-keyvault-secrets@v1
+        name: Read secret from KeyVault
         with:
           keyvault: "key-vault-234"
           secrets: 'postgres-user-password'  # comma separated list of secret keys that need to be fetched from the Key Vault 
         id: myGetSecretAction
-      - name: Set env
+      - name: Set DB env variables
         run: echo "PDB_PASS=${{ steps.myGetSecretAction.outputs.postgres-user-password }}" >> $GITHUB_ENV
-      - name: print env
-        run: echo ${{ env.PDB_PASS }}
-      - name: inject password
+      - name: Inject password
         run: |
           echo -e "\nspring.datasource.password=${{ env.PDB_PASS }}" >> ./src/main/resources/application.properties
           echo "spring.datasource.url=jdbc:postgresql://${{ env.APP_NAME }}-postgresql.demo.svc.cluster.local:5432/${{ env.DB_NAME }}" >> ./src/main/resources/application.properties
           echo "spring.datasource.username=${{ env.DB_NAME }}"  >> ./src/main/resources/application.properties    
-      - name: dispaly app properties
+      - name: Display application properties
         run: cat ./src/main/resources/application.properties
-      - id: set_output
+      - name: Output DB Password secret to next Job
         run: echo "::set-output name=PDB_PASS::${{ env.PDB_PASS }}"
       - name: Maven Package
         run: mvn -B clean package -DskipTests

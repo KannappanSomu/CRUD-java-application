@@ -261,7 +261,7 @@
 		<repository>
 			<id>github</id>
 			<name>NoticeBoard Simple CRUD application</name>
-			<url>https://maven.pkg.github.com/kannappansomu/NoticeBoard</url>
+			<url>https://maven.pkg.github.com/kannappansomu/CRUD-java-application</url>
 		</repository>
 	</distributionManagement>
 
