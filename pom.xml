@@ -11,7 +11,7 @@
 	</parent>
 
 	<groupId>com.wkrzywiec.medium</groupId>
-	<artifactId>CRUD-java-application</artifactId>
+	<artifactId>crud-java-application</artifactId>
 	<version>0.0.31</version>
 	<name>CRUD-java-application</name>
 	<description>Notice Board CRUD application</description>
