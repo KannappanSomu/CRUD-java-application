@@ -11,9 +11,9 @@
 	</parent>
 
 	<groupId>com.wkrzywiec.medium</groupId>
-	<artifactId>noticeboard</artifactId>
-	<version>0.0.30</version>
-	<name>noticeboard</name>
+	<artifactId>CRUD-java-application</artifactId>
+	<version>0.0.31</version>
+	<name>CRUD-java-application</name>
 	<description>Notice Board CRUD application</description>
 
 	<properties>
@@ -21,9 +21,9 @@
 		<org.mapstruct.version>1.3.1.Final</org.mapstruct.version>
 		<org.projectlombok.version>1.18.10</org.projectlombok.version>
 		<code.coverage.exclusions>
-			**/com/wkrzywiec/medium/noticeboard/controller/dto/**,
-			**/com/wkrzywiec/medium/noticeboard/entity/**,
-			**/com/wkrzywiec/medium/noticeboard/Application.java
+			**/com/wkrzywiec/medium/CRUD-java-application/controller/dto/**,
+			**/com/wkrzywiec/medium/CRUD-java-application/entity/**,
+			**/com/wkrzywiec/medium/CRUD-java-application/Application.java
 		</code.coverage.exclusions>
 	</properties>
 
@@ -261,7 +261,7 @@
 		<repository>
 			<id>github</id>
 			<name>NoticeBoard Simple CRUD application</name>
-			<url>https://maven.pkg.github.com/kannappansomu/NoticeBoard</url>
+			<url>https://maven.pkg.github.com/kannappansomu/CRUD-java-application</url>
 		</repository>
 	</distributionManagement>
 
