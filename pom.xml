@@ -12,7 +12,7 @@
 
 	<groupId>com.wkrzywiec.medium</groupId>
 	<artifactId>crud-java-application</artifactId>
-	<version>0.0.32</version>
+	<version>0.0.33</version>
 	<name>CRUD-java-application</name>
 	<description>Notice Board CRUD application</description>
 
